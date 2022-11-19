@@ -2,7 +2,6 @@ package data_access
 
 import (
 	"context"
-	"log"
 
 	"github.com/BDavid57/go-api-fiber/src/db"
 	"github.com/BDavid57/go-api-fiber/src/dto"
@@ -15,7 +14,6 @@ func TodoEdit(todoId string, todo dto.Todo) error {
 
 	objectId, err := primitive.ObjectIDFromHex(todoId)
 	if err != nil {
-		log.Fatal(err)
 		return err
 	}
 
@@ -24,7 +22,6 @@ func TodoEdit(todoId string, todo dto.Todo) error {
     }
 	_, err = todoCollection.UpdateOne(context.Background(), bson.M{"_id": objectId}, update)
 	if err != nil {
-		log.Fatal(err)
 		return err
 	}
 

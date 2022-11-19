@@ -2,7 +2,6 @@ package data_access
 
 import (
 	"context"
-	"log"
 
 	"github.com/BDavid57/go-api-fiber/src/db"
 	"github.com/BDavid57/go-api-fiber/src/dto"
@@ -16,13 +15,11 @@ func TodoGet(todoId string) (dto.Todo, error){
 
 	objectId, err := primitive.ObjectIDFromHex(todoId)
 	if err != nil {
-		log.Fatal(err)
 		return todo, err
 	}
 
 	err = todoCollection.FindOne(context.Background(), bson.M{"_id":objectId}).Decode(&todo)
 	if err != nil {
-		log.Fatal(err)
 		return todo, err
 	}
 

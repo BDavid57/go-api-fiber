@@ -2,7 +2,6 @@ package data_access
 
 import (
 	"context"
-	"log"
 
 	"github.com/BDavid57/go-api-fiber/src/db"
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,13 +13,11 @@ func TodoDelete(todoId string) error {
 
 	objectId, err := primitive.ObjectIDFromHex(todoId)
 	if err != nil {
-		log.Fatal(err)
 		return err
 	}
 
 	_, err = todoCollection.DeleteOne(context.Background(), bson.M{"_id": objectId})
 	if err != nil {
-		log.Fatal(err)
 		return err
 	}
 

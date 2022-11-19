@@ -2,7 +2,6 @@ package data_access
 
 import (
 	"context"
-	"log"
 
 	"github.com/BDavid57/go-api-fiber/src/db"
 	"github.com/BDavid57/go-api-fiber/src/dto"
@@ -16,7 +15,6 @@ func TodosGet() ([]dto.Todo, error){
 	res, err := todoCollection.Find(context.Background(), bson.D{})
 
 	if res.All(context.Background(), &todos); err != nil {
-		log.Fatal(err)
 		return todos, err
 	}
 
