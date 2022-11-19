@@ -6,9 +6,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func PostTodo(c *fiber.Ctx) error {
+func EditTodo(c *fiber.Ctx) error {
 	var todo dto.Todo
 	err := c.BodyParser(&todo)
+	id := c.Params("id")
 
 	if err != nil {
 		c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
@@ -16,6 +17,8 @@ func PostTodo(c *fiber.Ctx) error {
 		})
 	}
 
-	data_access.TodoCreate(todo)
-	return c.Status(fiber.StatusCreated).JSON(todo)
+	data_access.TodoEdit(id, todo)
+	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+		"message": "Todo updated successfully",
+	})
 }

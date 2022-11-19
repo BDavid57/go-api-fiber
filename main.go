@@ -16,6 +16,7 @@ func main() {
 	appApi.Get("/todo/:id", controllers.GetTodo)
 	appApi.Get("/todo", controllers.GetTodos)
 	appApi.Delete("/todo/:id", controllers.DeleteTodo)
+	appApi.Put("/todo/:id", controllers.EditTodo)
 		
 	// comes from hardcoded data
 	appApi.Get("/tweets", controllers.GetTweets)
