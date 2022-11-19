@@ -10,9 +10,11 @@ func PostTweet(c *fiber.Ctx) error {
 	var newTweet dto.Tweet
 
 	if err := c.BodyParser(&newTweet); err != nil {
-		return err
+		return c.Status(400).JSON(fiber.Map{
+			"message": "Couldn't create tweet",
+		})
 	}
 
 	data.Tweets = append(data.Tweets, newTweet)
-	return c.JSON(newTweet)
+	return c.Status(fiber.StatusCreated).JSON(newTweet)
 }

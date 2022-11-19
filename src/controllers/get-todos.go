@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"log"
-
 	"github.com/BDavid57/go-api-fiber/src/data_access"
 	"github.com/BDavid57/go-api-fiber/src/dto"
 	"github.com/gofiber/fiber/v2"
@@ -12,7 +10,6 @@ func GetTodos(c *fiber.Ctx) error {
 	todos, err := data_access.TodosGet()
 
 	if err != nil {
-		log.Fatal(err)
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
 			"error": err.Error(),
 		})

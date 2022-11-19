@@ -15,5 +15,7 @@ func GetTweetById(c *fiber.Ctx) error {
 		}
 	}
 
-	return fiber.NewError(fiber.StatusNotFound, "Tweet not found!")
+	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		"message": "Tweet not found",
+	})
 }

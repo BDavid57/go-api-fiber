@@ -11,8 +11,6 @@ func DeleteTweet(c *fiber.Ctx) error {
 	id := c.Params("id")
 	newSlice := []dto.Tweet{}
 
-	message := dto.NewMessage("Tweet deleted succesfully")
-
 	for _, tweet := range data.Tweets {
 		if tweet.ID != id {
 			newSlice = append(newSlice, tweet)
@@ -24,5 +22,7 @@ func DeleteTweet(c *fiber.Ctx) error {
 	}
 
 	data.Tweets = newSlice
-	return c.JSON(message)
+	return c.JSON(fiber.Map{
+		"message": "Tweet deleted successfully",
+	})
 }
