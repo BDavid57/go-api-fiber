@@ -1,4 +1,4 @@
-package api
+package controllers
 
 import (
 	"github.com/BDavid57/go-api-fiber/src/data"
@@ -6,26 +6,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func EditTweet(c *fiber.Ctx) error {
+
+func DeleteTweet(c *fiber.Ctx) error {
 	id := c.Params("id")
 	newSlice := []dto.Tweet{}
 
-	var newTweet dto.Tweet
-
-	if err := c.BodyParser(&newTweet); err != nil {
-		return err
-	}
+	message := dto.NewMessage("Tweet deleted succesfully")
 
 	for _, tweet := range data.Tweets {
 		if tweet.ID != id {
 			newSlice = append(newSlice, tweet)
-			continue
-		}
-		if tweet.ID == id {
-			newSlice = append(newSlice, newTweet)
 		}
 	}
 
+	if len(newSlice) == len(data.Tweets) {
+		return fiber.NewError(fiber.StatusNotFound, "Tweet not found!")
+	}
+
 	data.Tweets = newSlice
-	return c.JSON(newTweet)
+	return c.JSON(message)
 }

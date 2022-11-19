@@ -1,4 +1,4 @@
-package api
+package controllers
 
 import (
 	"github.com/BDavid57/go-api-fiber/src/data"
