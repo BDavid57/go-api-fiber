@@ -8,11 +8,11 @@ import (
 )
 
 // Add one to db
-func PostTodo(c *fiber.Ctx) error {
-	var todo dto.Todo
-	err := c.BodyParser(&todo)
+func PostTweet(c *fiber.Ctx) error {
+	var tweet dto.Tweet
+	err := c.BodyParser(&tweet)
 
-	data_access.TodoCreate(todo)
+	newTweet, _ := data_access.TweetCreate(tweet)
 	
 	if err != nil {
 		c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
@@ -20,19 +20,19 @@ func PostTodo(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(todo)
+	return c.Status(fiber.StatusCreated).JSON(newTweet)
 }
 
 // Add one to hardcoded data
-func PostTweet(c *fiber.Ctx) error {
-	var newTweet dto.Tweet
+func PostTodo(c *fiber.Ctx) error {
+	var newTodo dto.Todo
 
-	if err := c.BodyParser(&newTweet); err != nil {
+	if err := c.BodyParser(&newTodo); err != nil {
 		return c.Status(400).JSON(fiber.Map{
-			"message": "Couldn't create tweet",
+			"message": "Couldn't create todo",
 		})
 	}
 
-	data.Tweets = append(data.Tweets, newTweet)
-	return c.Status(fiber.StatusCreated).JSON(newTweet)
+	data.Todos = append(data.Todos, newTodo)
+	return c.Status(fiber.StatusCreated).JSON(newTodo)
 }

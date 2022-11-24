@@ -28,7 +28,3 @@ func ConnectToDb() {
     fmt.Println("Connected to MongoDB...")
 	DB = *client.Database("goFiber")
 }
-
-func init(){
-	ConnectToDb()
-}

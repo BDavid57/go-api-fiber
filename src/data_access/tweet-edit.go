@@ -9,18 +9,18 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func TodoEdit(todoId string, todo dto.Todo) error {
-	todoCollection := db.DB.Collection("todo")
+func TweetEdit(tweetId string, tweet dto.Tweet) error {
+	twitterCloneCollection := db.DB.Collection("twitter_clone")
 
-	objectId, err := primitive.ObjectIDFromHex(todoId)
+	objectId, err := primitive.ObjectIDFromHex(tweetId)
 	if err != nil {
 		return err
 	}
 
 	update := bson.M{
-        "$set": todo,
+        "$set": tweet,
     }
-	_, err = todoCollection.UpdateOne(context.Background(), bson.M{"_id": objectId}, update)
+	_, err = twitterCloneCollection.UpdateOne(context.Background(), bson.M{"_id": objectId}, update)
 	if err != nil {
 		return err
 	}

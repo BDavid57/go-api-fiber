@@ -8,12 +8,12 @@ import (
 )
 
 // Edit one from db
-func EditTodo(c *fiber.Ctx) error {
-	var todo dto.Todo
-	err := c.BodyParser(&todo)
+func EditTweet(c *fiber.Ctx) error {
+	var tweet dto.Tweet
+	err := c.BodyParser(&tweet)
 	id := c.Params("id")
 
-	data_access.TodoEdit(id, todo)
+	data_access.TweetEdit(id, tweet)
 	
 	if err != nil {
 		c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
@@ -22,31 +22,31 @@ func EditTodo(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-		"message": "Todo updated successfully",
+		"message": "Tweet updated successfully",
 	})
 }
 
 // Edit one from hardcoded data
-func EditTweet(c *fiber.Ctx) error {
+func EditTodo(c *fiber.Ctx) error {
 	id := c.Params("id")
-	newSlice := []dto.Tweet{}
+	newSlice := []dto.Todo{}
 
-	var newTweet dto.Tweet
+	var newTodo dto.Todo
 
-	if err := c.BodyParser(&newTweet); err != nil {
+	if err := c.BodyParser(&newTodo); err != nil {
 		return err
 	}
 
-	for _, tweet := range data.Tweets {
-		if tweet.ID != id {
-			newSlice = append(newSlice, tweet)
+	for _, todo := range data.Todos {
+		if todo.ID != id {
+			newSlice = append(newSlice, todo)
 			continue
 		}
-		if tweet.ID == id {
-			newSlice = append(newSlice, newTweet)
+		if todo.ID == id {
+			newSlice = append(newSlice, newTodo)
 		}
 	}
 
-	data.Tweets = newSlice
-	return c.JSON(newTweet)
+	data.Todos = newSlice
+	return c.JSON(newTodo)
 }

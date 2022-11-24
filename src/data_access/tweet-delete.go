@@ -8,19 +8,18 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func TodoDelete(todoId string) error {
-	todoCollection := db.DB.Collection("todo")
+func TweetDelete(tweetId string) error {
+	twitterCloneCollection := db.DB.Collection("twitter_clone")
 
-	objectId, err := primitive.ObjectIDFromHex(todoId)
+	objectId, err := primitive.ObjectIDFromHex(tweetId)
 	if err != nil {
 		return err
 	}
 
-	_, err = todoCollection.DeleteOne(context.Background(), bson.M{"_id": objectId})
+	_, err = twitterCloneCollection.DeleteOne(context.Background(), bson.M{"_id": objectId})
 	if err != nil {
 		return err
 	}
-
 
 	return nil
 }

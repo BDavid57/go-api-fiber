@@ -8,12 +8,12 @@ import (
 )
 
 // Get all from db
-func GetTodos(c *fiber.Ctx) error {
-	todos, err := data_access.TodosGet()
+func GetTweets(c *fiber.Ctx) error {
+	tweets, err := data_access.TweetsGet()
 
-	response := dto.GetAllTodosResponse {
-		Data: todos,
-		Total: len(todos),
+	response := dto.GetAllTweetsResponse {
+		Data: tweets,
+		Total: len(tweets),
 	}
 
 	if err != nil {
@@ -26,10 +26,10 @@ func GetTodos(c *fiber.Ctx) error {
 }
 
 // Get all from hardcoded data
-func GetTweets(c *fiber.Ctx) error {
-	response := dto.GetAllTweetsResponse {
-		Data: data.Tweets,
-		Total: len(data.Tweets),
+func GetTodos(c *fiber.Ctx) error {
+	response := dto.GetAllTodosResponse {
+		Data: data.Todos,
+		Total: len(data.Todos),
 	}
 
 	return c.JSON(response)

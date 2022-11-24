@@ -7,10 +7,10 @@ import (
 )
 
 // Get one from db
-func GetTodo(c *fiber.Ctx) error {
+func GetTweetById(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	todo, err := data_access.TodoGet(id)
+	tweet, err := data_access.TweetGet(id)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
@@ -18,14 +18,14 @@ func GetTodo(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(todo)
+	return c.Status(fiber.StatusOK).JSON(tweet)
 }
 
 // Get one from hardcoded data
-func GetTweetById(c *fiber.Ctx) error {
+func GetTodo(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	for _, item := range data.Tweets {
+	for _, item := range data.Todos {
 		if item.ID == id {
 			return c.JSON(item)
 			
@@ -33,6 +33,6 @@ func GetTweetById(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-		"message": "Tweet not found",
+		"message": "Todo not found",
 	})
 }

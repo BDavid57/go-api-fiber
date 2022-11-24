@@ -8,10 +8,10 @@ import (
 )
 
 // Delete from db
-func DeleteTodo(c *fiber.Ctx) error {
+func DeleteTweet(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	err := data_access.TodoDelete(id)
+	err := data_access.TweetDelete(id)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
@@ -20,27 +20,27 @@ func DeleteTodo(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Todo deleted successfully",
+		"message": "Tweet deleted successfully",
 	})
 }
 
 // Delete from hardcoded data
-func DeleteTweet(c *fiber.Ctx) error {
+func DeleteTodo(c *fiber.Ctx) error {
 	id := c.Params("id")
-	newSlice := []dto.Tweet{}
+	newSlice := []dto.Todo{}
 
-	for _, tweet := range data.Tweets {
-		if tweet.ID != id {
-			newSlice = append(newSlice, tweet)
+	for _, todo := range data.Todos {
+		if todo.ID != id {
+			newSlice = append(newSlice, todo)
 		}
 	}
 
-	if len(newSlice) == len(data.Tweets) {
-		return fiber.NewError(fiber.StatusNotFound, "Tweet not found!")
+	if len(newSlice) == len(data.Todos) {
+		return fiber.NewError(fiber.StatusNotFound, "Todo not found!")
 	}
 
-	data.Tweets = newSlice
+	data.Todos = newSlice
 	return c.JSON(fiber.Map{
-		"message": "Tweet deleted successfully",
+		"message": "Todo deleted successfully",
 	})
 }
