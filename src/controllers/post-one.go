@@ -1,38 +1,55 @@
 package controllers
 
 import (
-	"github.com/BDavid57/go-api-fiber/src/data"
-	"github.com/BDavid57/go-api-fiber/src/data_access"
+	"context"
+	"log"
+	"time"
+
+	"github.com/BDavid57/go-api-fiber/src/db"
 	"github.com/BDavid57/go-api-fiber/src/dto"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Add one to db
 func PostTweet(c *fiber.Ctx) error {
-	var tweet dto.Tweet
-	err := c.BodyParser(&tweet)
+	twitterCloneCollection := db.DB.Collection("twitter_clone")
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	tweet := new(dto.Tweet)
 
-	newTweet, _ := data_access.TweetCreate(tweet)
 	
-	if err != nil {
-		c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
+	if err := c.BodyParser(tweet); err != nil {
+        log.Println(err)
+        return c.Status(400).JSON(fiber.Map{
+            "message": "Failed to parse body",
+            "error":   err,
+        })
+    }
 
-	return c.Status(fiber.StatusCreated).JSON(newTweet)
-}
+    result, err := twitterCloneCollection.InsertOne(ctx, tweet)
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{
+            "message": "Tweet failed to insert",
+            "error":   err,
+        })
+    }
 
-// Add one to hardcoded data
-func PostTodo(c *fiber.Ctx) error {
-	var newTodo dto.Todo
+    var foundTweet dto.Tweet
+    findResult := twitterCloneCollection.FindOne(ctx, bson.M{"_id": result.InsertedID})
+    if err := findResult.Err(); err != nil {
+        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+            "message": "Tweet Not found",
+            "error":   err,
+        })
+    }
 
-	if err := c.BodyParser(&newTodo); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"message": "Couldn't create todo",
-		})
-	}
+    err = findResult.Decode(&foundTweet)
+    if err != nil {
+        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+            "message": "Tweet Not found",
+            "error":   err,
+        })
+    }
 
-	data.Todos = append(data.Todos, newTodo)
-	return c.Status(fiber.StatusCreated).JSON(newTodo)
+    return c.Status(fiber.StatusCreated).JSON(foundTweet)
 }

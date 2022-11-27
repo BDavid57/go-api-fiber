@@ -1,38 +1,38 @@
 package controllers
 
 import (
-	"github.com/BDavid57/go-api-fiber/src/data"
-	"github.com/BDavid57/go-api-fiber/src/data_access"
+	"context"
+	"time"
+
+	"github.com/BDavid57/go-api-fiber/src/db"
+	"github.com/BDavid57/go-api-fiber/src/dto"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Get one from db
 func GetTweetById(c *fiber.Ctx) error {
-	id := c.Params("id")
+	twitterCloneCollection := db.DB.Collection("twitter_clone")
+    ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
-	tweet, err := data_access.TweetGet(id)
+    var tweet dto.Tweet
+    objId, err := primitive.ObjectIDFromHex(c.Params("id"))
+    findResult := twitterCloneCollection.FindOne(ctx, bson.M{"_id": objId})
+    if err := findResult.Err(); err != nil {
+        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+            "message": "Tweet Not found",
+            "error":   err,
+        })
+    }
 
-	if err != nil {
-		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
+    err = findResult.Decode(&tweet)
+    if err != nil {
+        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+            "message": "Tweet Not found",
+            "error":   err,
+        })
+    }
 
-	return c.Status(fiber.StatusOK).JSON(tweet)
-}
-
-// Get one from hardcoded data
-func GetTodo(c *fiber.Ctx) error {
-	id := c.Params("id")
-
-	for _, item := range data.Todos {
-		if item.ID == id {
-			return c.JSON(item)
-			
-		}
-	}
-
-	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-		"message": "Todo not found",
-	})
+    return c.Status(fiber.StatusOK).JSON(tweet)
 }

@@ -1,46 +1,35 @@
 package controllers
 
 import (
-	"github.com/BDavid57/go-api-fiber/src/data"
-	"github.com/BDavid57/go-api-fiber/src/data_access"
-	"github.com/BDavid57/go-api-fiber/src/dto"
+	"context"
+	"time"
+
+	"github.com/BDavid57/go-api-fiber/src/db"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Delete from db
 func DeleteTweet(c *fiber.Ctx) error {
-	id := c.Params("id")
+	twitterCloneCollection := db.DB.Collection("twitter_clone")
+    ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
-	err := data_access.TweetDelete(id)
-
-	if err != nil {
-		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Tweet deleted successfully",
-	})
-}
-
-// Delete from hardcoded data
-func DeleteTodo(c *fiber.Ctx) error {
-	id := c.Params("id")
-	newSlice := []dto.Todo{}
-
-	for _, todo := range data.Todos {
-		if todo.ID != id {
-			newSlice = append(newSlice, todo)
-		}
-	}
-
-	if len(newSlice) == len(data.Todos) {
-		return fiber.NewError(fiber.StatusNotFound, "Todo not found!")
-	}
-
-	data.Todos = newSlice
-	return c.JSON(fiber.Map{
-		"message": "Todo deleted successfully",
-	})
+    objId, err := primitive.ObjectIDFromHex(c.Params("id"))
+    if err != nil {
+        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+            "message": "Tweet not found",
+            "error":   err,
+        })
+    }
+    _, err = twitterCloneCollection.DeleteOne(ctx, bson.M{"_id": objId})
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{
+            "message": "Tweet failed to delete",
+            "error":   err,
+        })
+    }
+    return c.Status(fiber.StatusOK).JSON(fiber.Map{
+        "message": "Tweet deleted successfully",
+    })
 }
