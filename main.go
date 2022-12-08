@@ -24,5 +24,5 @@ func main() {
 	appApi.Put("/tweets/:id", controllers.EditTweet)
 		
 	db.ConnectToDb()
-	app.Listen(":80")
+	app.Listen("localhost:5000")
 }
